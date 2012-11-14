@@ -1,0 +1,25 @@
+html {
+	font-size: 62.5%;
+}
+
+body {
+	padding: 10px;
+}
+
+#container {
+	margin 10px auto;
+}
+
+li {
+	font-size: 1.4em;
+	line-height: 1.4em;
+}
+
+p {
+	font-size: 1.4em;
+	line-height: 1.4em;
+}
+
+select[name="id"] {
+	width: 300px;
+}
