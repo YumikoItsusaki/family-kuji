@@ -11,7 +11,7 @@
 </head>
 <body>
 <p>あなたがプレゼントをあげるのは</p>
-<p style="font-weight: bold; font-size: 1.5em;">${f:h(recipient.name)}さん</p>
+<p style="font-weight: bold; font-size: 1.5em;">${f:h(me.recipient.name)}さん</p>
 <p>です！</p>
 </body>
 </html>

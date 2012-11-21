@@ -20,6 +20,8 @@ public class Member implements Serializable {
 
     private String name;
 
+    private String email;
+
     private String pass;
 
     private long recipientId;
@@ -28,6 +30,15 @@ public class Member implements Serializable {
 
     @Attribute(persistent = false)
     private Member recipient;
+
+    public Member() {
+    }
+
+    public Member(String name, String email) {
+        this.name = name;
+        this.email = email;
+        this.available = true;
+    }
 
     /**
      * Returns the key.
@@ -73,6 +84,14 @@ public class Member implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPass() {

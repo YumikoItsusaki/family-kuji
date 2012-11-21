@@ -1,6 +1,8 @@
 package kuji.controller;
 
 import static com.google.appengine.api.datastore.DatastoreServiceFactory.getDatastoreService;
+import static kuji.Config.ADMIN_EMAIL;
+import static kuji.Config.GAE_ADMIN_EMAIL;
 import static org.slim3.datastore.Datastore.createKey;
 import static org.slim3.datastore.Datastore.getOrNull;
 
@@ -14,9 +16,12 @@ import org.slim3.controller.Controller;
 import org.slim3.controller.Navigation;
 import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
+import org.slim3.util.StringUtil;
 
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
+import com.google.appengine.api.mail.MailService.Message;
+import com.google.appengine.api.mail.MailServiceFactory;
 
 public class KujiController extends Controller {
 
@@ -79,11 +84,41 @@ public class KujiController extends Controller {
 
         me.setPass(pass);
         me.setRecipientId(recipient.getId());
+        me.setRecipient(recipient);
         recipient.setAvailable(false);
         Datastore.put(tx, me, recipient);
         tx.commit();
 
-        requestScope("recipient", recipient);
+        if (!StringUtil.isEmpty(me.getEmail())) {
+            Message msg =
+                new Message(
+                    GAE_ADMIN_EMAIL,
+                    me.getEmail(),
+                    "いつさきファミリーくじ",
+                    createNotifyMailMessage(me));
+            MailServiceFactory.getMailService().send(msg);
+        }
+
+        Message msg =
+            new Message(
+                GAE_ADMIN_EMAIL,
+                ADMIN_EMAIL,
+                "いつさきファミリーくじ",
+                me.getName() + "さんがくじをひきました。");
+        MailServiceFactory.getMailService().send(msg);
+
         return forward("kuji.jsp");
+    }
+
+    private String createNotifyMailMessage(Member m) {
+        StringBuilder buf = new StringBuilder();
+        buf.append(m.getName() + "さま\n");
+        buf.append("\n");
+        buf.append("あなたがプレゼントを贈るのは　");
+        buf.append(m.getRecipient().getName() + "さん　");
+        buf.append("です。\n");
+        buf.append("\n");
+        buf.append("楽しいクリスマス会にしましょう！\n");
+        return buf.toString();
     }
 }
